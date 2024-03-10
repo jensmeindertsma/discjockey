@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+
+# Git
+/.git/
+/.gitignore
+
+# pnpm
+/node_modules/
+
+# Vite
+/build/
+
+# Postgres
+/postgres-data/
+
+# dotenv
+/.env
+/.env.example
+
+# Prettier
+/.prettierignore
+/prettier.config.js
+
+# ESLint
+/eslint.config.js
+
+# vscode
+/.vscode/
+
+# NVM
+/.nvmrc
+
+# Docker
+/.dockerignore
+/docker-compose.yml
+/Dockerfile
+
+# Other
+/LICENSE.md
+/README.md

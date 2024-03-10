@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# pnpm
+/node_modules/
+
+# Vite
+/build/
+
+# Postgres
+/postgres-data/
+
+# dotenv
+.env

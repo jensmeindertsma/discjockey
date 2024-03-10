@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "DavidAnson.vscode-markdownlint",
+    "dbaeumer.vscode-eslint",
+    "ms-azuretools.vscode-docker",
+    "prisma.prisma",
+    "foxundermoon.shell-format"
+  ]
+}
