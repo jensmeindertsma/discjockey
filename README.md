@@ -14,8 +14,7 @@ A starter template for building incredible web applications with Remix.
 ## Setting up
 
 0. Replace placeholders with your own name: search for `yourname` and replace occurences with your name.
-1. Make sure you have switched to the right Node.js version by executing `nvm use` (learn more about [Node Version Manager](https://github.com/nvm-sh/nvm)).
-   - You may need to run `nvm install <version>` to download the right version of Node.js
+1. Make sure you have switched to the right Node.js version by executing `nvm install`, which will download and enable the correct version of Node.js if you didn't have it already (learn more about [Node Version Manager](https://github.com/nvm-sh/nvm)).
 2. Enable package manager shimming with `corepack enable`
 3. Install dependencies with `pnpm install`
 4. Boot up the database with `pnpm database:up`
