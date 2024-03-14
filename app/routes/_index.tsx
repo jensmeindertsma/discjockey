@@ -6,7 +6,7 @@ import type { MetaResult } from "~/remix";
 export function meta(): MetaResult {
   return [
     {
-      title: "Home | Discjockey",
+      title: "Home",
     },
   ];
 }
