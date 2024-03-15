@@ -1,19 +1,25 @@
-import type { MetaResult } from "./remix";
+import { findUser, getUser } from "./models/user.server";
+import type { LoaderArguments, MetaArguments, MetaResult } from "./remix";
+import { getSession } from "./session.server";
+import { json } from "@remix-run/node";
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useRouteError,
 } from "@remix-run/react";
 import type { ReactNode } from "react";
 
 import "./root.css";
 
-export function meta(): MetaResult {
+export function meta({ error }: MetaArguments): MetaResult {
   return [
     {
-      title: "Discjockey",
+      title: error ? "Error!" : "Discjockey",
     },
   ];
 }
@@ -41,5 +47,45 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const data = useLoaderData<typeof loader>();
+
+  return (
+    <>
+      <header>
+        <p>Discjockey</p>
+        {data.user ? <p>{data.user.name}</p>}
+      </header>
+      <Outlet />
+    </>
+  );
+}
+
+export async function loader({ request }: LoaderArguments) {
+  const session = await getSession(request);
+
+  if (session.isAuthenticated) {
+    return json({ user: await findUser(session.userId, { include: {name: true} }) });
+  }
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <h1>Error!</h1>
+      <p>{error instanceof Error ? error.message : "Unknown error"}</p>
+    </>
+  );
 }

@@ -32,6 +32,9 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  },
   "editor.formatOnSave": true,
   "eslint.experimental.useFlatConfig": true,
   "typescript.tsdk": "node_modules/typescript/lib"
