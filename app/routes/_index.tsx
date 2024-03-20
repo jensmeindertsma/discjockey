@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import type { LoaderArguments, MetaResult } from "~/remix";
 import { getSession } from "~/session.server";
 
@@ -13,13 +13,18 @@ export function meta(): MetaResult {
 export default function Home() {
   return (
     <>
-      <h1>Home</h1>
-      <p>TODO: set up CRUD application</p>
+      <h1>Discjockey</h1>
+      <p>You should sign up or sign in!</p>
     </>
   );
 }
 
 export async function loader({ request }: LoaderArguments) {
-  await getSession(request, { redirectUser: "/app" });
+  const session = await getSession(request);
+
+  if (session.isAuthenticated) {
+    return redirect("/app");
+  }
+
   return json(null);
 }

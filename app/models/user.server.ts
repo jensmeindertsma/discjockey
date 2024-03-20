@@ -1,17 +1,9 @@
 import type { User } from "@prisma/client";
 import { database } from "~/database.server";
 
-type FetchOptions = {
-  include?: {};
-};
-
-export async function findUser(
-  id: number,
-  options?: FetchOptions,
-): Promise<null> {
+async function findUser(id: number): Promise<User | null> {
   return await database.user.findUnique({
     where: { id },
-    select: {},
   });
 }
 

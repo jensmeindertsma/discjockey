@@ -29,37 +29,14 @@ type UserSession = {
   end(): Promise<never>;
 };
 
-export async function getSession<
-  T extends
-    | { redirectGuest?: string; redirectUser?: never }
-    | { redirectUser?: string; redirectGuest?: never },
->(
+export async function getSession(
   request: Request,
-  options?: T,
-): Promise<
-  T extends { redirectGuest: string }
-    ? UserSession
-    : T extends { redirectUser: string }
-      ? GuestSession
-      : GuestSession | UserSession
-> {
+): Promise<GuestSession | UserSession> {
   const session = await sessionStorage.getSession(
     request.headers.get("Cookie"),
   );
 
   const userId = session.get("userId") as number | null;
-
-  if (options.redirectGuest) {
-    if (!userId) {
-      throw redirect(options.redirectGuest);
-    }
-  }
-
-  if (options.redirectUser) {
-    if (userId) {
-      throw redirect(options.redirectUser);
-    }
-  }
 
   if (userId) {
     return {

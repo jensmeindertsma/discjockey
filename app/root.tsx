@@ -1,9 +1,11 @@
-import { findUser, getUser } from "./models/user.server";
+import { getUser } from "./models/user.server";
 import type { LoaderArguments, MetaArguments, MetaResult } from "./remix";
 import { getSession } from "./session.server";
 import { json } from "@remix-run/node";
 import {
+  Form,
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -52,8 +54,34 @@ export default function App() {
   return (
     <>
       <header>
-        <p>Discjockey</p>
-        {data.user ? <p>{data.user.name}</p>}
+        <p>
+          <Link to="/">Discjockey</Link>
+        </p>
+        <p>
+          {data.user
+            ? `Logged in as "${data.user.name}`
+            : "Not logged in (Guest)"}
+        </p>
+        <nav>
+          {data.user ? (
+            <ul>
+              <li>
+                <Form method="POST" action="/signout">
+                  <button type="submit">Sign out</button>
+                </Form>
+              </li>
+            </ul>
+          ) : (
+            <ul>
+              <li>
+                <Link to="/signup">Sign up</Link>
+              </li>
+              <li>
+                <Link to="/signin">Sign in</Link>
+              </li>
+            </ul>
+          )}
+        </nav>
       </header>
       <Outlet />
     </>
@@ -63,9 +91,11 @@ export default function App() {
 export async function loader({ request }: LoaderArguments) {
   const session = await getSession(request);
 
-  if (session.isAuthenticated) {
-    return json({ user: await findUser(session.userId, { include: {name: true} }) });
-  }
+  return json({
+    user: session.isAuthenticated
+      ? { name: (await getUser(session.userId))?.name }
+      : null,
+  });
 }
 
 export function ErrorBoundary() {
