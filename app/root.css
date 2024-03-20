@@ -1,6 +1,23 @@
+body,
+p,
+ul {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
 @media (prefers-color-scheme: dark) {
-  body {
+  body,
+  input {
     background-color: black;
     color: white;
   }
+}
+
+body header {
+  background-color: gray;
+}
+
+input {
+  display: block;
 }

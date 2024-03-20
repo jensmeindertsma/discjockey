@@ -20,7 +20,7 @@ const sessionStorage = createCookieSessionStorage({ cookie });
 
 type GuestSession = {
   isAuthenticated: false;
-  authenticate(data: { userId: string }): Promise<never>;
+  authenticate(data: { userId: number }): Promise<never>;
 };
 
 type UserSession = {

@@ -1,5 +1,7 @@
 import { json, redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useNavigation } from "@remix-run/react";
+import { database } from "~/database.server";
+import { badRequest } from "~/http";
 import type { ActionArguments, LoaderArguments, MetaResult } from "~/remix";
 import { getSession } from "~/session.server";
 
@@ -8,12 +10,28 @@ export function meta(): MetaResult {
 }
 
 export default function SignUp() {
+  const navigation = useNavigation();
+  const isSubmitting =
+    navigation.state === "submitting" || navigation.state === "loading";
+
   return (
     <>
       <h1>Sign up</h1>
       <Form method="POST">
-        <button type="submit" disabled>
-          Sign up
+        <label htmlFor="name">Name</label>
+        <input type="text" name="name" id="name" required autoComplete="name" />
+
+        <label htmlFor="name">Email</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          required
+          autoComplete="email"
+        />
+
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Working..." : "Sign up"}
         </button>
       </Form>
     </>
@@ -37,15 +55,37 @@ export async function action({ request }: ActionArguments) {
     return redirect("/app");
   }
 
-  // TODO
+  const formData = await request.formData();
+  const name = formData.get("name");
+  const email = formData.get("email");
 
-  // Parse form data
+  if (!name || typeof name !== "string") {
+    throw new Error("Field `name` is required");
+  }
 
-  // Check if data is valid and email is unused
+  if (!email || typeof email !== "string") {
+    throw new Error("Field `name` is required");
+  }
 
-  // Create user model
+  let errors: { name?: string; email?: string } = {};
 
-  // Authenticate user session
+  if (name.length > 35) {
+    errors.name = "Too long!";
+  }
 
-  return redirect("/app");
+  if (email.length > 35) {
+    errors.email = "Too long!";
+  } else if ((await database.user.findUnique({ where: { email } })) !== null) {
+    errors.email = "Already in use!";
+  }
+
+  // TODO: password field
+
+  if (Object.entries(errors).length) {
+    return badRequest({ values: { name, email }, errors });
+  }
+
+  const { id: userId } = await database.user.create({ data: { name, email } });
+
+  await session.authenticate({ userId });
 }
