@@ -11,8 +11,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
   useRouteError,
+  useRouteLoaderData,
 } from "@remix-run/react";
 import type { ReactNode } from "react";
 
@@ -31,6 +31,9 @@ export function links() {
 }
 
 export function Layout({ children }: { children: ReactNode }) {
+  const data = useRouteLoaderData<typeof loader>("root");
+  const error = useRouteError();
+
   return (
     <html lang="en">
       <head>
@@ -40,6 +43,47 @@ export function Layout({ children }: { children: ReactNode }) {
         <Links />
       </head>
       <body>
+        <header>
+          <p>
+            <Link to="/">Discjockey</Link>
+          </p>
+
+          {data === undefined ? (
+            error ? (
+              <em>Error!</em>
+            ) : (
+              <em>Unknown</em>
+            )
+          ) : data.user ? (
+            <>
+              <em>{data.user.name}</em>
+              <nav>
+                <ul>
+                  <li>
+                    <Form method="POST" action="/signout">
+                      <button type="submit">Sign out</button>
+                    </Form>
+                  </li>
+                </ul>
+              </nav>
+            </>
+          ) : (
+            <>
+              <em>Guest</em>
+              <nav>
+                <ul>
+                  <li>
+                    <Link to="/signup">Sign up</Link>
+                  </li>
+                  <li>
+                    <Link to="/signin">Sign in</Link>
+                  </li>
+                </ul>
+              </nav>
+            </>
+          )}
+        </header>
+
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -49,43 +93,7 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
-  const data = useLoaderData<typeof loader>();
-
-  return (
-    <>
-      <header>
-        <p>
-          <Link to="/">Discjockey</Link>
-        </p>
-        <p>
-          {data.user
-            ? `Logged in as "${data.user.name}`
-            : "Not logged in (Guest)"}
-        </p>
-        <nav>
-          {data.user ? (
-            <ul>
-              <li>
-                <Form method="POST" action="/signout">
-                  <button type="submit">Sign out</button>
-                </Form>
-              </li>
-            </ul>
-          ) : (
-            <ul>
-              <li>
-                <Link to="/signup">Sign up</Link>
-              </li>
-              <li>
-                <Link to="/signin">Sign in</Link>
-              </li>
-            </ul>
-          )}
-        </nav>
-      </header>
-      <Outlet />
-    </>
-  );
+  return <Outlet />;
 }
 
 export async function loader({ request }: LoaderArguments) {

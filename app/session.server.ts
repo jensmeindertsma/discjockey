@@ -20,12 +20,12 @@ const sessionStorage = createCookieSessionStorage({ cookie });
 
 type GuestSession = {
   isAuthenticated: false;
-  authenticate(data: { userId: number }): Promise<never>;
+  authenticate(data: { userId: string }): Promise<never>;
 };
 
 type UserSession = {
   isAuthenticated: true;
-  userId: number;
+  userId: string;
   end(): Promise<never>;
 };
 
@@ -36,7 +36,7 @@ export async function getSession(
     request.headers.get("Cookie"),
   );
 
-  const userId = session.get("userId") as number | null;
+  const userId = session.get("userId") as string | null;
 
   if (userId) {
     return {
